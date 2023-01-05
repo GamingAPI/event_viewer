@@ -1,0 +1,98 @@
+# Require the following setup in ssh host:
+# - has directory ~/deployments/
+name: Deploy website and package
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    needs: build-and-push-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Configure production SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/production.key
+          chmod 600 ~/.ssh/production.key
+          cat >>~/.ssh/config <<END
+          Host production
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/production.key
+            StrictHostKeyChecking no
+          END
+        env:
+          SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
+          SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
+          SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+
+      - name: Zip files
+        run: |
+          zip ./$OWNER_$REPO_$SHA.zip ./docker-compose.yml
+          chmod 600 ./$OWNER_$REPO_$SHA.zip
+        env:
+          SHA: ${{ github.sha }}
+          REPO: ${{ github.event.repository.name }}
+          OWNER: ${{ github.repository_owner }}
+
+      - name: Transfer related files
+        run: scp -i ~/.ssh/production.key ./$OWNER_$REPO_$SHA.zip production:~/deployments/$OWNER_$REPO_$SHA.zip
+        env:
+          SHA: ${{ github.sha }}
+          REPO: ${{ github.event.repository.name }}
+          OWNER: ${{ github.repository_owner }}
+
+      - name: Unpack files
+        run: ssh production "cd ~/deployments/ && [ ! -d \"$OWNER_$REPO_$SHA\" ] && unzip $OWNER_$REPO_$SHA.zip -d $OWNER_$REPO_$SHA || exit 0"
+        env:
+          SHA: ${{ github.sha }}
+          REPO: ${{ github.event.repository.name }}
+          OWNER: ${{ github.repository_owner }}
+
+      - name: Deploy the stack
+        run: ssh production "cd ~/deployments/$OWNER_$REPO_$SHA && (export NATS_AUTHENTICATION=${{ secrets.NATS_AUTHENTICATION }}; docker stack deploy -c ./docker-compose.yml gamingapi_event_viewer)"
+        env:
+          SHA: ${{ github.sha }}
+          REPO: ${{ github.event.repository.name }}
+          OWNER: ${{ github.repository_owner }}

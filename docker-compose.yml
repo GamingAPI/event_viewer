@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  gamingapi_event_viewer:
+    build: ./
+    image: ghcr.io/gamingapi/event_viewer:main
+    ports:
+      - 3000
+    restart: unless-stopped
+    environment:
+      NATS_AUTHENTICATION: "${NATS_AUTHENTICATION}"
+    deploy:
+      replicas: 1
+      update_config:
+        delay: 5m
+        parallelism: 1
+        failure_action: rollback
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.labels.service == true]
+    networks:
+      - gamingapi
+networks:
+  gamingapi:
+    external: true
