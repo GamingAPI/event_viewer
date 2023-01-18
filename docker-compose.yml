@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  gamingapi_event_viewer:
+  event_viewer:
     build: ./
     image: ghcr.io/gamingapi/event_viewer:main
     ports:
