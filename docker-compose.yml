@@ -8,6 +8,7 @@ services:
     restart: unless-stopped
     environment:
       NATS_AUTHENTICATION: "${NATS_AUTHENTICATION}"
+      NATS_AUTHENTICATION_URL: "${NATS_AUTHENTICATION_URL}"
     deploy:
       replicas: 1
       update_config:

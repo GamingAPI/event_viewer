@@ -1,21 +1,21 @@
 {
-  "name": "@gamingapi/event_viewer",
+  "name": "@gamingapi/event-viewer",
   "version": "0.1.0",
   "publishConfig": {
     "access": "public"
   },
   "description": "This is an example event viewer that display the in game events in real time as they happen in the Rust GamingAPI sandbox server.",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/gamingapi/event_viewer",
+  "homepage": "https://github.com/gamingapi/event-viewer",
   "bugs": {
-    "url": "https://github.com/gamingapi/event_viewer/issues"
+    "url": "https://github.com/gamingapi/event-viewer/issues"
   },
   "engines": {
     "node": ">=14"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/gamingapi/event_viewer.git"
+    "url": "git://github.com/gamingapi/event-viewer.git"
   },
   "keywords": [
     "rust",
@@ -29,7 +29,7 @@
     "name": "Jonas Lagoni (jonas-lt@live.dk)"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "cross-env NATS_AUTHENTICATION=SUABVM4NEM4N2OVJAO5V2NBMMYFLDU3WT4D7JSMSDAR5TBRWOBQPRM3CY4 next dev -p 8080",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -56,5 +56,8 @@
     "socket.io-client": "^4.5.4",
     "typescript": "4.9.4",
     "utf-8-validate": "^5.0.10"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }

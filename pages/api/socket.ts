@@ -27,8 +27,8 @@ const socketMessages: MaxQueue = new MaxQueue({maxSize: 10});
 const setupNats = async (socketIo: Server) => {
   try {
     await natsClient.connect({
-      servers: "nats://localhost:4222",
-      authenticator: Nats.credsAuthenticator(new TextEncoder().encode(creds)),
+      servers: process.env.NATS_AUTHENTICATION_URL ? process.env.NATS_AUTHENTICATION_URL : "nats://localhost:4222",
+      authenticator: Nats.nkeyAuthenticator(new TextEncoder().encode(creds)),
     });
     HandleRustServersServerIdEventsCommand(socketIo, socketMessages, natsClient); 
     HandleRustServersServerIdEventsPlayerSteamIdChatted(socketIo, socketMessages, natsClient); 
