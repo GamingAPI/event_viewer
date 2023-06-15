@@ -1,3 +1,8 @@
+/**
+ * Simple max queue implementation
+ * 
+ * Used to limit the number of messages that is cached on the server.
+ */
 export class MaxQueue {
 	elements: any[];
 	maxSize: number;
