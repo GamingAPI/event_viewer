@@ -23,7 +23,7 @@ type PropsTest = {
 export default function EventComponent(props: PropsTest) {
 	const formattedMessage = JSON.stringify(JSON.parse(props.message), null, 4);
 	return (
-		<Item style={{width:"100%"}}>
+		<Item style={{width:"100%"}} className="alerts-border">
       <Typography gutterBottom variant="h5">
         Message was send on channel: <b>{props.channel}</b>
       </Typography>

@@ -19,6 +19,7 @@ import { HandleRustServersServerIdPlayersSteamIdEventsItemsItemIdPickup } from '
 import { HandleRustServersServerIdPlayersSteamIdEventsReported } from '../../utils/NatsHandlers/RustServersServerIdPlayersSteamIdEventsReported';
 import { HandleRustServersServerIdPlayersSteamIdEventsRespawned } from '../../utils/NatsHandlers/RustServersServerIdPlayersSteamIdEventsRespawned';
 import { HandleRustServersServerIdPlayersSteamIdEventsUnbanned } from '../../utils/NatsHandlers/RustServersServerIdPlayersSteamIdEventsUnbanned';
+import { HandleRustServersServerIdPlayersSteamIdEventsDisconnected } from '../../utils/NatsHandlers/RustServersServerIdPlayersSteamIdEventsDisconnected';
 
 const creds = process.env.NATS_AUTHENTICATION;
 
@@ -38,6 +39,7 @@ const setupNats = async (socketIo: Server) => {
     HandleRustServersServerIdPlayersSteamIdEventsBanned(socketIo, socketMessages, natsClient); 
     HandleRustServersServerIdPlayersSteamIdEventsCombatHit(socketIo, socketMessages, natsClient); 
     HandleRustServersServerIdPlayersSteamIdEventsConnected(socketIo, socketMessages, natsClient); 
+    HandleRustServersServerIdPlayersSteamIdEventsDisconnected(socketIo, socketMessages, natsClient); 
     HandleRustServersServerIdPlayersSteamIdEventsGatheredResources(socketIo, socketMessages, natsClient); 
     HandleRustServersServerIdPlayersSteamIdEventsItemsItemIdCrafted(socketIo, socketMessages, natsClient); 
     HandleRustServersServerIdPlayersSteamIdEventsItemsItemIdLoot(socketIo, socketMessages, natsClient); 
