@@ -1,8 +1,10 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-![](./assets/test1.webm)
+![](./assets/playing.webm)
 
-![](./assets/test2.webm)
+![](./assets/connection.webm)
+
+![](./assets/smashing.webm)
 
 This single page Next.js website, showcases how you can receive events form a Rust game server and displaying it live by utilizing a Socket.Io server.
 
